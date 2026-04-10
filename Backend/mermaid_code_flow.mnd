@@ -1,0 +1,74 @@
+graph TD
+    %% External Entities
+    User((User))
+    NewsAPI((News Source API))
+    SocialMedia((Social Media Platform))
+    AI_Engine[AI Question Generator]
+
+    %% Database Entities
+    DB_Users[(Users Table)]
+    DB_News[(NewsArticles Table)]
+    DB_Quizzes[(Quizzes Table)]
+    DB_Questions[(Questions Table)]
+
+    %% Feature: Real-time news feed integration
+    subgraph "Feature: News Integration"
+        F1_Fetch[Fetch News Feed]
+        NewsAPI -->|Pull Articles| F1_Fetch
+        F1_Fetch -->|Store Metadata| DB_News
+    end
+
+    %% Feature: Automated question generation
+    subgraph "Feature: Question Generation"
+        F2_Gen[Generate Questions]
+        DB_News -->|Retrieve Content| F2_Gen
+        F2_Gen -->|Request Generation| AI_Engine
+        AI_Engine -->|Return Q&A| F2_Gen
+        F2_Gen -->|Store Questions| DB_Questions
+    end
+
+    %% Feature: User profiling & Quiz Experience
+    subgraph "Feature: User Profiling & Quizzes"
+        F3_Auth[Authentication]
+        F3_Profile[Retrieve User Profile]
+        F3_Init[Initialize Personalized Quiz]
+        F3_Play[User Takes Quiz]
+
+        User -->|Login/Signup| F3_Auth
+        F3_Auth -->|Verify Credentials| DB_Users
+        User -->|Start Quiz| F3_Init
+        F3_Init -->|Get History/Preferences| DB_Users
+        F3_Init -->|Select Questions| DB_Questions
+        F3_Init -->|Create Quiz Session| DB_Quizzes
+        DB_Quizzes -->|Load Quiz| F3_Play
+        F3_Play -->|Display| User
+    end
+
+    %% Feature: Quiz result analysis and reporting
+    subgraph "Feature: Analysis & Reporting"
+        F4_Submit[Submit Answers]
+        F4_Score[Calculate Score & Analyze]
+        
+        User -->|Submit Responses| F4_Submit
+        F4_Submit -->|Process| F4_Score
+        F4_Score -->|Update Quiz Record| DB_Quizzes
+        F4_Score -->|Update User Stats| DB_Users
+        F4_Score -->|Display Report| User
+    end
+
+    %% Feature: Social media sharing
+    subgraph "Feature: Social Sharing"
+        F5_Share[Generate Share Content]
+        User -->|Share Request| F5_Share
+        DB_Quizzes -->|Get Result Data| F5_Share
+        F5_Share -->|Post Results| SocialMedia
+    end
+
+    %% Styling
+    classDef db fill:#e1f5fe,stroke:#01579b,stroke-width:2px;
+    classDef ext fill:#fff9c4,stroke:#fbc02d,stroke-width:2px;
+    classDef proc fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px;
+    
+    class DB_Users,DB_News,DB_Quizzes,DB_Questions db;
+    class User,NewsAPI,SocialMedia,AI_Engine ext;
+    class F1_Fetch,F2_Gen,F3_Auth,F3_Profile,F3_Init,F3_Play,F4_Submit,F4_Score,F5_Share proc;

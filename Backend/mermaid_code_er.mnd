@@ -1,0 +1,40 @@
+erDiagram
+    Users {
+        int user_id PK
+        string name
+        string email
+        string password_hash
+        string quiz_results
+    }
+
+    NewsArticles {
+        int article_id PK
+        string title
+        text content
+        datetime timestamp
+        string source
+    }
+
+    Quizzes {
+        int quiz_id PK
+        int user_id FK
+        datetime created_at
+        int total_questions
+        int correct_answers
+    }
+
+    Questions {
+        int question_id PK
+        int quiz_id FK
+        int article_id FK
+        text question
+        string option_a
+        string option_b
+        string option_c
+        string option_d
+        string answer
+    }
+
+    Users ||--o{ Quizzes : "takes"
+    Quizzes ||--o{ Questions : "contains"
+    NewsArticles ||--o{ Questions : "generates"
